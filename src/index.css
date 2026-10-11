@@ -1,0 +1,156 @@
+@import 'tailwindcss';
+
+/* 8-bit game look: warm yellow sky, chunky pixel type, stepped pixel frames. */
+@theme {
+  /* Headings: pixel display face. Body: Minion Pro if installed locally (it is an
+     Adobe-licensed font and is not shipped), else Crimson Pro (SIL OFL) — a
+     licensed Minion-like serif. Swap both here. */
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-sans: 'Minion Pro', 'Crimson Pro', Georgia, serif;
+  --font-mono: 'Press Start 2P', monospace;
+
+  --color-canvas: #f8f6ef;
+  --color-card: #ffffff;
+  --color-ink: #171717;
+  --color-muted: #55524b;
+  --color-rule: #d8d3c6;
+  --color-blue: #2454ff;
+  --color-red: #ff5148;
+  --color-yellow: #ffd84d;
+  --color-gold: #ffd84d;
+  --color-green: #61c98b;
+  --color-sky: #a9c1ff;
+  --color-ok: #2a8a55;
+  --color-ok-soft: #e1f5e9;
+  --color-bad: #c42a22;
+  --color-bad-soft: #ffe3e1;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-canvas font-sans text-ink text-lg;
+    min-height: 100dvh;
+    /* Dot-matrix paper texture. */
+    background-image: radial-gradient(rgb(23 23 23 / 0.07) 1px, transparent 1.4px);
+    background-size: 14px 14px;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-pixel);
+    font-weight: 400;
+    letter-spacing: 0 !important;
+    line-height: 1.25;
+  }
+  :focus-visible {
+    outline: 4px dashed var(--color-blue);
+    outline-offset: 6px;
+  }
+  canvas, img {
+    image-rendering: pixelated;
+  }
+}
+
+/* Minion Pro Regular where installed (Adobe-licensed, not bundled), else Crimson Pro. */
+.font-minion {
+  font-family: 'Minion Pro', 'MinionPro-Regular', 'Crimson Pro', Georgia, serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.01em;
+}
+
+.label {
+  font-family: var(--font-pixel);
+  @apply text-[10px] leading-relaxed tracking-[0.04em] uppercase;
+}
+
+/*
+ * Pixel frames. Four hard shadows draw a 4px black border whose corners are
+ * left out — the classic notched pixel corner — plus an optional drop shadow.
+ */
+.px-box,
+.px-box-lg,
+.px-box-sm {
+  --px: 4px;
+  margin: var(--px);
+  box-shadow:
+    0 calc(-1 * var(--px)) 0 0 var(--color-ink),
+    0 var(--px) 0 0 var(--color-ink),
+    calc(-1 * var(--px)) 0 0 0 var(--color-ink),
+    var(--px) 0 0 0 var(--color-ink),
+    0 0 0 0 transparent;
+}
+.px-box-lg { --px: 6px; }
+.px-box-sm { --px: 3px; }
+.px-drop {
+  box-shadow:
+    0 calc(-1 * var(--px, 4px)) 0 0 var(--color-ink),
+    0 var(--px, 4px) 0 0 var(--color-ink),
+    calc(-1 * var(--px, 4px)) 0 0 0 var(--color-ink),
+    var(--px, 4px) 0 0 0 var(--color-ink),
+    calc(var(--px, 4px) * 2) calc(var(--px, 4px) * 2) 0 0 rgb(0 0 0 / 0.22);
+}
+
+/* Game button: pixel frame, top highlight, bottom shade; presses down when clicked. */
+.px-btn {
+  --px: 4px;
+  margin: var(--px);
+  font-family: var(--font-pixel);
+  box-shadow:
+    0 calc(-1 * var(--px)) 0 0 var(--color-ink),
+    0 var(--px) 0 0 var(--color-ink),
+    calc(-1 * var(--px)) 0 0 0 var(--color-ink),
+    var(--px) 0 0 0 var(--color-ink),
+    inset 0 var(--px) 0 0 rgb(255 255 255 / 0.45),
+    inset 0 calc(-1 * var(--px) - 2px) 0 0 rgb(0 0 0 / 0.25);
+  transition: transform 60ms steps(1);
+}
+.px-btn:active:not(:disabled) {
+  transform: translateY(3px);
+}
+
+.pin {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes glow {
+  0%, 100% { filter: brightness(1); transform: scale(1); }
+  50% { filter: brightness(1.15); transform: scale(1.08); }
+}
+@keyframes ripple {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+@keyframes wavebar {
+  0%, 100% { transform: scaleY(0.55); }
+  50% { transform: scaleY(1.1); }
+}
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(24px); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes vignette {
+  0%, 100% { box-shadow: inset 0 0 0 0 rgb(255 81 72 / 0); }
+  50% { box-shadow: inset 0 0 120px 20px rgb(255 81 72 / 0.45); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*='animate-'] { animation: none !important; }
+}
